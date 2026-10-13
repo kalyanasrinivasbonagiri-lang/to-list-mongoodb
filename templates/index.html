@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flask & MongoDB Todo App</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <div class="app-container">
+    <header class="app-header">
+      <div class="brand-badge">NoSQL Lab Assignment</div>
+      <h2>Simple Todo App (Flask + MongoDB)</h2>
+      <p class="subtitle">A full-stack demonstration using Flask, PyMongo, and MongoDB.</p>
+      
+      <!-- Database Connection Status Badge -->
+      <div class="db-status-bar">
+        {% if db_connected %}
+          <span class="status-indicator online"></span>
+          <span class="status-text">Connected to: <strong>{{ mongo_uri_source }}</strong></span>
+        {% else %}
+          <span class="status-indicator offline"></span>
+          <span class="status-text">Database Disconnected</span>
+        {% endif %}
+      </div>
+    </header>
+
+    {% if db_error %}
+      <div class="alert-banner">
+        <strong>Warning:</strong> {{ db_error }}
+        <p class="alert-tip">Ensure MongoDB is running locally (<code>net start MongoDB</code>) or check your <code>MONGO_URI</code>.</p>
+      </div>
+    {% endif %}
+
+    <!-- Task Input Form -->
+    <section class="card form-card">
+      <form action="/add" method="POST" class="todo-form">
+        <div class="input-group">
+          <input 
+            type="text" 
+            name="task" 
+            id="task-input" 
+            placeholder="Enter a new task..." 
+            autocomplete="off"
+            required
+          >
+          <button type="submit" id="add-btn">
+            <span class="btn-icon">+</span>
+            <span>Add Task</span>
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Task List Section -->
+    <section class="card list-card">
+      <div class="list-header">
+        <h3>Saved Tasks in <code>beginner_db.todos</code></h3>
+        <span class="task-count-badge">{{ todos|length }} item{% if todos|length != 1 %}s{% endif %}</span>
+      </div>
+
+      {% if todos|length > 0 %}
+        <ul class="todo-list">
+          {% for todo in todos %}
+            <li class="todo-item">
+              <span class="todo-bullet"></span>
+              <span class="todo-text">{{ todo.task }}</span>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <div class="empty-state">
+          <div class="empty-icon">📝</div>
+          <h4>No tasks added yet</h4>
+          <p>Add your first task above to save a document in MongoDB!</p>
+        </div>
+      {% endif %}
+    </section>
+
+    <footer class="app-footer">
+      <p>Lab Task: <strong>Web framework and a NoSQL database</strong> &bull; Department of CSE</p>
+    </footer>
+  </div>
+</body>
+</html>
